@@ -11,7 +11,7 @@
 void
 init_intr(void) {
 	
-	outb(PORT_PIC_MASTER + 1, 0xff);
+	outb(PORT_PIC_MASTER + 1, 0xf6);
 	outb(PORT_PIC_SLAVE + 1, 0xff);
 
 	outb(PORT_PIC_MASTER, 0x11);

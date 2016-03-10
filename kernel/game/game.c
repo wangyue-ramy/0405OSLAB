@@ -16,7 +16,7 @@ void draw_board() {
 }
 
 int main(){
-//	init_intr();
+	init_intr();
 //	init_timer();
 	blue_screen();
 	draw_board();
@@ -25,6 +25,7 @@ int main(){
 	draw_piece(14, 14, 0);
 	draw_piece(14, 13, 15);
 	draw_cursor(0, 0, 19);
-	hlt();
+//	hlt();
+	while(1);
 	return 0;
 }
