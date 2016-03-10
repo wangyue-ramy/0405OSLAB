@@ -44,5 +44,5 @@ in_long(short port) {
 }
 static inline void
 out_byte(short port, char data) {
-	__asm __volatile("outb %0, %w1" : "=a" (data) : "d" (port));
+	__asm __volatile("outb %0, %w1" :: "a" (data), "d" (port));
 }

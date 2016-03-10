@@ -16,29 +16,28 @@ void readseg(unsigned char *, int, int);
 void
 bootmain(void) {
 	struct ELFHeader *elf;
-	struct ProgramHeader *ph;
-	unsigned char *pa;
-	int i, entry;
+	struct ProgramHeader *ph, *eph;
+	unsigned char *pa, *i;
 	/* 因为引导扇区只有512字节，我们设置了堆栈从0x8000向下生长。
 	 * 我们需要一块连续的空间来容纳ELF文件头，因此选定了0x8000。 */
 	elf = (struct ELFHeader*)0x8000;
 
 	/* 读入ELF文件头 */
-	pa = (unsigned char*)elf;
-	readseg(pa, 520000, KERNELADD);
-	entry = elf->entry;
+	readseg((unsigned char*)elf, 4096, 0);
 
 	/* 把每个program segement依次读入内存 */
-	ph = (struct ProgramHeader*)(0x8000 + elf->phoff);
-	for (i = 0; i < elf->phnum; i++) {
+	ph = (struct ProgramHeader*)((unsigned char*)elf + elf->phoff);
+	eph = ph + elf->phnum;
+	for (; ph < eph; ph++) {
 		pa = (unsigned char*)(ph->paddr);
-		readseg(pa, ph->filesz, KERNELADD + ph->off);
-		ph++;
+		readseg(pa, ph->filesz, ph->off);
+		for (i = pa + ph->filesz; i < pa + ph->memsz; i++)
+			*i = 0;
 	}
 
 	/*跳转到程序中*/
-	asm volatile("jmp %0" ::"r"(entry));
-	asm volatile("hlt");
+	((void(*)(void))elf->entry)();
+	//asm volatile("hlt");
 }
 
 
