@@ -20,8 +20,7 @@ serial_idle(void) {
 
 void
 serial_printc(char ch) {
-	/*
-	 * implement this function
-	 */
-	;
+	init_serial();
+	while (!serial_idle());
+	outb(SERIAL_PORT, ch);
 }
