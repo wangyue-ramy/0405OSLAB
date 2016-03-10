@@ -1,4 +1,5 @@
 #include "include/x86.h"
+#include "include/video.h"
 
 #define PORT_PIC_MASTER 0x20
 #define PORT_PIC_SLAVE  0xA0
@@ -9,6 +10,7 @@
  * 硬件中断IRQ从32号开始，自动发送EOI */
 void
 init_intr(void) {
+	
 	outb(PORT_PIC_MASTER + 1, 0xff);
 	outb(PORT_PIC_SLAVE + 1, 0xff);
 
@@ -18,7 +20,7 @@ init_intr(void) {
 
 	outb(PORT_PIC_MASTER + 1, 1 << IRQ_SLAVE);
 
-	outb(PORT_PIC_MASTER + 1, 0x1);
+	outb(PORT_PIC_MASTER + 1, 0x2);
 
 	outb(PORT_PIC_SLAVE, 0x11);
 	outb(PORT_PIC_SLAVE + 1, IRQ_OFFSET + 8);
@@ -32,4 +34,8 @@ init_intr(void) {
 
 	outb(PORT_PIC_SLAVE, 0x68);
 	outb(PORT_PIC_SLAVE, 0x0a);
+
+	outb(PORT_PIC_MASTER + 1, 0xff);
+	outb(PORT_PIC_SLAVE + 1, 0xff);
+
 }

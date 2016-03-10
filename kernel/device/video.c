@@ -57,5 +57,7 @@ blue_screen(){
 	memset((void *)vmem,1,SCR_SIZE);
 }
 
-
+void green_screen() {
+	memset((void *)vmem, 2, SCR_SIZE);
+}
 	
