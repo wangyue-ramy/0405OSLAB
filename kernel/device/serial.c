@@ -1,4 +1,5 @@
 #include "include/x86.h"
+#include "include/serial.h"
 
 #define SERIAL_PORT  0x3F8
 
@@ -13,7 +14,7 @@ init_serial(void) {
 	outb(SERIAL_PORT + 4, 0x0B);
 }
 
-static inline int
+int
 serial_idle(void) {
 	return (inb(SERIAL_PORT + 5) & 0x20) != 0;
 }

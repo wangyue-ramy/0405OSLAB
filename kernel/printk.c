@@ -1,7 +1,7 @@
 #include "include/x86.h"
 #include "include/stdarg.h"
 #include "include/stdio.h"
-
+#include "include/serial.h"
 /*
  * You may refer to lib/printfmt.c
  * to implement the printk() and vprintk().
@@ -18,29 +18,89 @@ putch(int ch, int *cnt){
 
 }
 */
+#define STRING_MAX_LENGTH 256
 
-int	vprintk(const char *fmt,va_list ap){ 
-	hlt();
-	/*
-	 * uncomment the hlt()
-	 * after your completement.
-	 * refer to manual.
-	 */
-	return -1;
+void reverse(char *str, int start, int end) {
+	char tmp;
+	while (start <= (start + end) / 2) {
+		tmp = str[start];
+		str[start] = str[end - start];
+		str[end - start] = tmp;
+		start += 1;
+	}
+}
+
+int num2str(int num, int base, char *str) {
+	int len = 0;
+	if (num < 0) {
+		str[len++] = '-';
+		num = -num;
+	}
+	while (num > 0) {
+		str[len++] = (num % base) + '0';
+		num /= base;
+	}
+	if (str[0] == '-')
+		reverse(str, 1, len - 1);
+	else
+		reverse(str, 0, len - 1);
+	return len;
+}
+
+
+int	vprintk(const char *fmt,va_list ap){
+	int i = 0, len = 0, tmp;
+	char result[STRING_MAX_LENGTH], ch, *str;
+	while (fmt[i] != '\0') {
+		if (fmt[i] == '%') {
+			switch (fmt[++i]) {
+				case 'd': {
+					tmp = va_arg(ap, int);
+					len += num2str(tmp, 10, result + len);
+					break;
+				}
+				case 'x': {
+					tmp = va_arg(ap, int);
+					result[len++] = '0';
+					result[len++] = 'x';
+					len += num2str(tmp, 16, result + len);
+					break;
+				}
+				case 's': {
+					str = va_arg(ap, char *);
+					while (*str != '\0') { result[len++] = *str++; }
+					break;
+				}
+				case 'c': {
+					ch = (char)va_arg(ap, int);
+					result[len++] = ch;
+					break;
+				}
+				default: {
+					result[len++] = fmt[i - 1];
+					result[len++] = fmt[i];
+				}
+			}
+			i++;
+		} else {
+			result[len++] = fmt[i++];
+		}
+	}
+	result[len] = '\0';
+	fmt = result;
+	return len;
 }
 
 
 
-int	printk(const char *fmt, ...){
-	hlt();
-	/*
-	 * uncomment the hlt()
-	 * after your completement.
-	 * refer to manual.
-	 *
-	 * Hint:Use va_list to get the parameters and call vprintk().
-	 *		You may also build the actual string here and call a
-	 *		function which would print a string.
-	 */
-	return -1;
+int printk(const char *fmt, ...){
+	va_list ap;
+	int i, len;
+
+	va_start(ap, fmt);
+	len = vprintk(fmt, ap);
+	for (i = 0; i < len; i++) {
+		serial_printc(fmt[i]);
+	}
+	return 0;
 }
