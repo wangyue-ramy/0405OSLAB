@@ -33,15 +33,16 @@ struct ProgramHeader {
 static inline char
 in_byte(short port) {
 	char data;
-	/*请自行加入内联汇编代码*/
+	__asm __volatile("inb %w1, %0" : "=a" (data) : "d" (port));
 	return data;
 }
 static inline int 
 in_long(short port) {
 	int data;
+	__asm __volatile("inl %w1, %0" : "=a" (data) : "d" (port));
 	return data;
 }
 static inline void
 out_byte(short port, char data) {
-	/*请自行加入内联汇编代码*/
+	__asm __volatile("outb %0, %w1" : "=a" (data) : "d" (port));
 }
