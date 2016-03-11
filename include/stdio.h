@@ -15,8 +15,8 @@ int	snprintf(char *str, int size, const char *fmt, ...);
 int	vsnprintf(char *str, int size, const char *fmt, va_list);
 
 // kernel/src/printk.c
-int	vprintk(const char *fmt, va_list);
-int	printk(const char *fmt, ...);
+void vprintk(const char *fmt, va_list);
+void printk(const char *fmt, ...);
 
 
 

@@ -1,6 +1,7 @@
 #include "include/x86.h"
 #include "include/stdio.h"
 #include "include/assert.h"
+#include "include/serial.h"
 //#include "game.h"
 
 static void (*do_timer)(void);
@@ -19,6 +20,7 @@ set_keyboard_intr_handler( void (*ptr)(int) ) {
  * 请仔细理解这段程序的含义，这些内容将在后续的实验中被反复使用。 */
 void
 irq_handle(struct TrapFrame *tf) {
+	serial_printc('t');
 	if(tf->irq < 1000) {
 		if(tf->irq == -1) {
 			printk("%s, %d: Unhandled exception!\n", __FUNCTION__, __LINE__);
@@ -36,7 +38,7 @@ irq_handle(struct TrapFrame *tf) {
 		uint32_t val = inb(0x61);
 		outb(0x61, val | 0x80);
 		outb(0x61, val);
-
+		serial_printc('t');
 		printk("%s, %d: key code = %x\n", __FUNCTION__, __LINE__, code);
 		do_keyboard(code);
 	} else {

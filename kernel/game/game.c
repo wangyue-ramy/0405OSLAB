@@ -4,6 +4,8 @@
 #include "./include/i8259.h"
 #include "./include/timer.h"
 #include "./draw.h"
+#include "./include/serial.h"
+#include "./include/keyboard.h"
 
 void draw_board() {
 	int x, y;
@@ -15,9 +17,16 @@ void draw_board() {
 	}
 }
 
+void test_keyboard(int code) {
+	serial_printc(code);
+}
+
 int main(){
-	init_intr();
-//	init_timer();
+	init_intr();				
+//	init_timer();					
+	init_idt();						
+	asm volatile("sti");
+	set_keyboard_intr_handler(test_keyboard);
 	blue_screen();
 	draw_board();
 	draw_piece(0, 0, 0);
@@ -26,6 +35,7 @@ int main(){
 	draw_piece(14, 13, 15);
 	draw_cursor(0, 0, 19);
 //	hlt();
+	printk("I am %d, %s", 29, "Wang Yue");
 	while(1);
 	return 0;
 }

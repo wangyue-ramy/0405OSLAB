@@ -22,7 +22,8 @@ putch(int ch, int *cnt){
 
 void reverse(char *str, int start, int end) {
 	char tmp;
-	while (start <= (start + end) / 2) {
+	int half = (start + end) / 2;
+	while (start <= half) {
 		tmp = str[start];
 		str[start] = str[end - start];
 		str[end - start] = tmp;
@@ -48,7 +49,7 @@ int num2str(int num, int base, char *str) {
 }
 
 
-int	vprintk(const char *fmt,va_list ap){
+void vprintk(const char *fmt,va_list ap){
 	int i = 0, len = 0, tmp;
 	char result[STRING_MAX_LENGTH], ch, *str;
 	while (fmt[i] != '\0') {
@@ -87,20 +88,15 @@ int	vprintk(const char *fmt,va_list ap){
 		}
 	}
 	result[len] = '\0';
-	fmt = result;
-	return len;
+	for (i = 0; i < len; i++)
+		serial_printc(result[i]);
 }
 
 
 
-int printk(const char *fmt, ...){
+void printk(const char *fmt, ...){
 	va_list ap;
-	int i, len;
-
 	va_start(ap, fmt);
-	len = vprintk(fmt, ap);
-	for (i = 0; i < len; i++) {
-		serial_printc(fmt[i]);
-	}
-	return 0;
+	vprintk(fmt, ap);
+	va_end(ap);
 }
