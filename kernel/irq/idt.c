@@ -84,9 +84,9 @@ void init_idt() {
 	 * 
 	 * */
 	uint16_t data[3];
-	data[0] = sizeof(idt) - 1;
+	data[0] = sizeof(idt);
 	data[1] = (uint32_t)idt;
 	data[2] = ((uint32_t)idt) >> 16;
-	asm volatile("lidt (%0)" : : "r"(data));
+	asm __volatile__("lidt (%0)" : : "r" (data));
 }
 
