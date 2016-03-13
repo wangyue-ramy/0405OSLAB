@@ -21,11 +21,10 @@ void test_keyboard(int code) {
 	serial_printc(code);
 }
 
-int main(){
+int main() {
+	init_idt();
 	init_intr();				
-//	init_timer();					
-	init_idt();						
-	asm volatile("sti");
+	
 	set_keyboard_intr_handler(test_keyboard);
 	blue_screen();
 	draw_board();
@@ -34,8 +33,8 @@ int main(){
 	draw_piece(14, 14, 0);
 	draw_piece(14, 13, 15);
 	draw_cursor(0, 0, 19);
-//	hlt();
 	printk("I am %d, %s", 29, "Wang Yue");
+	enable_interrupt();
 	while(1);
 	return 0;
 }
